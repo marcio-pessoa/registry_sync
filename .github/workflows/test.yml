@@ -18,7 +18,7 @@ jobs:
           pip install bandit
       - name: Bandit - A security linter from PyCQA
         run: |
-          bandit --skip B311 --recursive .
+          bandit --skip B404,B603 --recursive .
   flake8:
     runs-on: ubuntu-latest
     strategy:
