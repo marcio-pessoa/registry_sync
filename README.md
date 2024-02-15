@@ -38,5 +38,5 @@ registry_sync.py source_registry destination_registry:5000 -v INFO
 Docker usage:
 
 ```sh
-docker run registry-sync source_registry destination_registry
+docker run registry_sync source_registry destination_registry
 ```
