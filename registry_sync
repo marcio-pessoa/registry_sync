@@ -24,8 +24,8 @@ class RegistrySync():
     """ RegistrySync class """
 
     __version__ = '0.1.0'
-    __date__ = '2023-05-25'
-    __name = 'registry_sync'
+    __date__ = '2024-02-15'
+    __name = 'registry_sync.py'
 
     def __init__(self):
         Log().name = self.__name
