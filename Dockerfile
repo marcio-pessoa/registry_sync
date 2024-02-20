@@ -29,4 +29,4 @@ RUN ["/bin/bash", "-c", "source venv/bin/activate"]
 # Instal Python packages
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["./registry_sync.py"]
+ENTRYPOINT ["./registry_sync"]

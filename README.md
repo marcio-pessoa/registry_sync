@@ -32,7 +32,7 @@ venv/bin/pip install -r requirements.txt
 Direct usage:
 
 ```sh
-registry_sync.py source_registry destination_registry:5000 -v INFO
+registry_sync source_registry destination_registry:5000 -v INFO
 ```
 
 Docker usage:
