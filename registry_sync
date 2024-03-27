@@ -25,7 +25,7 @@ class RegistrySync():
 
     __version__ = '0.1.0'
     __date__ = '2024-02-15'
-    __name = 'registry_sync.py'
+    __name = 'registry_sync'
 
     def __init__(self):
         Log().name = self.__name
@@ -35,7 +35,7 @@ class RegistrySync():
         self.__parser = None
         self._argparser()
 
-        if len(sys.argv) < 2:  # When no args given, run random game
+        if len(sys.argv) < 2:
             print(
                 f'{self.__name}: missing registry positional argument\n'
                 f"Try '{self.__name} --help' for more information."
