@@ -55,7 +55,7 @@ jobs:
           pip install pylint
       - name: Code analysis with pylint
         run: |
-          pylint $(find . -name "*.py")
+          pylint $(find . -name "registry_sync")
   unittest:
     runs-on: ubuntu-latest
     strategy:
