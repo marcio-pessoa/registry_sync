@@ -166,9 +166,11 @@ class RegistrySync():
         preffix = 'docker://'
         copy_cmd = 'skopeo copy'
         args = '--src-tls-verify=false --dest-tls-verify=false'
-        cmd = f'{copy_cmd} {args} ' \
-              f'{preffix}{source}/{container}:{tag} ' \
-              f'{preffix}{destination}/{container}:{tag}'
+        cmd = (
+            f'{copy_cmd} {args} '
+            f'{preffix}{source}/{container}:{tag} '
+            f'{preffix}{destination}/{container}:{tag}'
+        )
         log.debug('Running: %s', cmd)
 
         result = subprocess.run(shlex.split(cmd), shell=False, check=True)
@@ -176,18 +178,6 @@ class RegistrySync():
             log.error('Failed')
 
         return result
-
-
-def json_pretty(data: dict) -> str:
-    """ Pretty output JSON data
-
-    Args:
-        data (dict): dictionary to be formmated as JSON
-
-    Returns:
-        str: fancy JSON
-    """
-    return json.dumps(data, indent=2, separators=(", ", ": "))
 
 
 class Log:
@@ -260,6 +250,18 @@ class CustomFormatter(logging.Formatter):
         log_fmt = self.formats.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
+
+
+def json_pretty(data: dict) -> str:
+    """ Pretty output JSON data
+
+    Args:
+        data (dict): dictionary to be formmated as JSON
+
+    Returns:
+        str: fancy JSON
+    """
+    return json.dumps(data, indent=2, separators=(", ", ": "))
 
 
 log = Log().logger
