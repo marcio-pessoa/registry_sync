@@ -38,5 +38,5 @@ registry_sync source_registry destination_registry:5000 -v INFO
 Docker usage:
 
 ```sh
-docker run registry_sync source_registry destination_registry
+docker run ghcr.io/marcio-pessoa/registry_sync source_registry destination_registry
 ```
