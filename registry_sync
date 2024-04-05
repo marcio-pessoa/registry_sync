@@ -104,7 +104,7 @@ class RegistrySync():
         Returns:
             list[str]: list of container images
         """
-        log.info('Fetching source catalog...')
+        log.debug('Fetching source catalog...')
 
         prefix: str = 'http://'
         suffix: str = '/v2/_catalog'
@@ -131,7 +131,7 @@ class RegistrySync():
         Returns:
             list[str]: list of tags
         """
-        log.info('Fetching source container image tags for %s...', container)
+        log.debug('Fetching source container image tags for %s...', container)
 
         prefix: str = 'http://'
         suffix: str = f'/v2/{container}/tags/list'
@@ -173,7 +173,11 @@ class RegistrySync():
         )
         log.debug('Running: %s', cmd)
 
-        result = subprocess.run(shlex.split(cmd), shell=False, check=True)
+        result = subprocess.run(
+            shlex.split(cmd),
+            shell=False,
+            check=True,
+        )
         if result.returncode != 0:
             log.error('Failed')
 
