@@ -173,10 +173,15 @@ class RegistrySync():
         )
         log.debug('Running: %s', cmd)
 
+        stdout = subprocess.DEVNULL
+        if Log().verbosity == 10:
+            stdout = None
+
         result = subprocess.run(
             shlex.split(cmd),
             shell=False,
             check=True,
+            stdout=stdout
         )
         if result.returncode != 0:
             log.error('Failed')
