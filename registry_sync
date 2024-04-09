@@ -268,7 +268,7 @@ def json_pretty(data: dict) -> str:
         data (dict): dictionary to be formmated as JSON
 
     Returns:
-        str: fancy JSON
+        str: pretty JSON
     """
     return json.dumps(data, indent=2, separators=(", ", ": "))
 
