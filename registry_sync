@@ -23,7 +23,7 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.2.0-29'
+    __version__ = '0.2.1-36'
     __date__ = '2024-04-17'
     __name = 'registry_sync'
 
@@ -194,7 +194,7 @@ class RegistrySync():
 
         return result['tags']
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
     def copy(self, source: str, src_username: str, src_password: str,
              destination: str, dst_username: str, dst_password: str,
              container: str, tag: str) -> subprocess.CompletedProcess:
@@ -211,30 +211,29 @@ class RegistrySync():
         """
         log.info('Syncing %s:%s', container, tag)
 
-        src_auth = ''
-        if src_username and src_password:
-            src_auth = (
-                f'--src-username={src_username} '
-                f'--src-password={src_password}'
-            )
-
-        dst_auth = ''
-        if dst_username and dst_password:
-            dst_auth = (
-                f'--dst-username={dst_username} '
-                f'--dst-password={dst_password}'
-            )
-
         preffix = 'docker://'
         copy_cmd = 'skopeo copy'
         args = '--src-tls-verify=false --dest-tls-verify=false'
         cmd = (
             f'{copy_cmd} {args} '
             f'{preffix}{source}/{container}:{tag} '
-            f'{src_auth} '
-            f'{dst_auth} '
             f'{preffix}{destination}/{container}:{tag}'
         )
+
+        if src_username and src_password:
+            cmd += (
+                ' '
+                f'--src-username={src_username} '
+                f'--src-password={src_password}'
+            )
+
+        if dst_username and dst_password:
+            cmd = (
+                ' '
+                f'--dst-username={dst_username} '
+                f'--dst-password={dst_password}'
+            )
+
         log.debug('Running: %s', cmd)
 
         stdout = subprocess.DEVNULL
