@@ -194,6 +194,7 @@ class RegistrySync():
 
         return result['tags']
 
+    # pylint: disable=too-many-arguments,too-many-locals
     def copy(self, source: str, src_username: str, src_password: str,
              destination: str, dst_username: str, dst_password: str,
              container: str, tag: str) -> subprocess.CompletedProcess:
