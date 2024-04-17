@@ -55,7 +55,11 @@ class RegistrySync():
                                      args.src_username,
                                      args.src_password,
                                      container):
-                self.copy(args.source, args.destination, container, tag)
+                self.copy(args.source,
+                          args.src_username, args.src_password,
+                          args.destination,
+                          args.dst_username, args.dst_password,
+                          container, tag)
 
     def _argparser(self):
         self.__parser = argparse.ArgumentParser(
@@ -88,6 +92,18 @@ class RegistrySync():
             type=str,
             default=None,
             help=('Source password')
+        )
+        self.__parser.add_argument(
+            '--dst-username',
+            type=str,
+            default=None,
+            help=('Destination user name')
+        )
+        self.__parser.add_argument(
+            '--dst-password',
+            type=str,
+            default=None,
+            help=('Destination password')
         )
         self.__parser.add_argument(
             '-v', '--verbosity',
@@ -178,7 +194,8 @@ class RegistrySync():
 
         return result['tags']
 
-    def copy(self, source: str, destination: str,
+    def copy(self, source: str, src_username: str, src_password: str,
+             destination: str, dst_username: str, dst_password: str,
              container: str, tag: str) -> subprocess.CompletedProcess:
         """ Copy container image tag between registries
 
@@ -193,12 +210,28 @@ class RegistrySync():
         """
         log.info('Syncing %s:%s', container, tag)
 
+        src_auth = ''
+        if src_username and src_password:
+            src_auth = (
+                f'--src-username={src_username} '
+                f'--src-password={src_password}'
+            )
+
+        dst_auth = ''
+        if dst_username and dst_password:
+            dst_auth = (
+                f'--dst-username={dst_username} '
+                f'--dst-password={dst_password}'
+            )
+
         preffix = 'docker://'
         copy_cmd = 'skopeo copy'
         args = '--src-tls-verify=false --dest-tls-verify=false'
         cmd = (
             f'{copy_cmd} {args} '
             f'{preffix}{source}/{container}:{tag} '
+            f'{src_auth} '
+            f'{dst_auth} '
             f'{preffix}{destination}/{container}:{tag}'
         )
         log.debug('Running: %s', cmd)
