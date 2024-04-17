@@ -1,4 +1,4 @@
-FROM python:3.9.12-slim
+FROM python:3.11.6-slim
 
 # Install SO dependencies
 RUN apt update
@@ -8,14 +8,14 @@ RUN apt-get -y install skopeo
 RUN groupadd -r app
 RUN useradd -g app app
 
+# Home directory
+RUN mkdir /home/app
+RUN chown -R app:app /home/app
+
 # Work directory
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN chown -R app:app /usr/src/app
-
-# Home directory
-RUN mkdir /home/app
-RUN chown -R app:app /home/app
 
 # User activities
 USER app
