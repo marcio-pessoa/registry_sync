@@ -23,8 +23,8 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.1.3-27'
-    __date__ = '2024-04-07'
+    __version__ = '0.2.0-29'
+    __date__ = '2024-04-17'
     __name = 'registry_sync'
 
     def __init__(self):
@@ -48,8 +48,13 @@ class RegistrySync():
         log.debug('Source registry: %s', args.source)
         log.debug('Destination registry: %s', args.destination)
 
-        for container in self.get_catalog(args.source):
-            for tag in self.get_tags(args.source, container):
+        for container in self.get_catalog(args.source,
+                                          args.src_username,
+                                          args.src_password):
+            for tag in self.get_tags(args.source,
+                                     args.src_username,
+                                     args.src_password,
+                                     container):
                 self.copy(args.source, args.destination, container, tag)
 
     def _argparser(self):
@@ -73,6 +78,18 @@ class RegistrySync():
         self.__parser.add_argument('source', help='Source registry')
         self.__parser.add_argument('destination', help='Destination registry')
         self.__parser.add_argument(
+            '--src-username',
+            type=str,
+            default=None,
+            help=('Source user name')
+        )
+        self.__parser.add_argument(
+            '--src-password',
+            type=str,
+            default=None,
+            help=('Source password')
+        )
+        self.__parser.add_argument(
             '-v', '--verbosity',
             type=str,
             choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'],
@@ -95,7 +112,8 @@ class RegistrySync():
             version=(f'{self.__name} {self.__version__} {self.__date__}'),
         )
 
-    def get_catalog(self, registry: str) -> list[str]:
+    def get_catalog(self, registry: str,
+                    username: str, password: str) -> list[str]:
         """ Get registry catalog
 
         Args:
@@ -110,7 +128,12 @@ class RegistrySync():
         suffix: str = '/v2/_catalog'
         uri: str = f'{prefix}{registry}{suffix}'
 
-        response = requests.get(uri, timeout=self.__timeout)
+        if username and password:
+            response = requests.get(uri, timeout=self.__timeout,
+                                    auth=(username, password))
+        else:
+            response = requests.get(uri, timeout=self.__timeout)
+
         result = json.loads(response.text)
 
         if 'repositories' not in result:
@@ -121,7 +144,9 @@ class RegistrySync():
 
         return result['repositories']
 
-    def get_tags(self, registry: str, container: str) -> list[str]:
+    def get_tags(self, registry: str,
+                 username: str, password: str,
+                 container: str) -> list[str]:
         """ Get container image tags
 
         Args:
@@ -137,7 +162,12 @@ class RegistrySync():
         suffix: str = f'/v2/{container}/tags/list'
         uri: str = f'{prefix}{registry}{suffix}'
 
-        response = requests.get(uri, timeout=self.__timeout)
+        if username and password:
+            response = requests.get(uri, timeout=self.__timeout,
+                                    auth=(username, password))
+        else:
+            response = requests.get(uri, timeout=self.__timeout)
+
         result = json.loads(response.text)
 
         if 'tags' not in result:
