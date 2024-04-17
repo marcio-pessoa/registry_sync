@@ -23,8 +23,8 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.1.3-27'
-    __date__ = '2024-04-07'
+    __version__ = '0.2.0-29'
+    __date__ = '2024-04-17'
     __name = 'registry_sync'
 
     def __init__(self):
@@ -48,9 +48,18 @@ class RegistrySync():
         log.debug('Source registry: %s', args.source)
         log.debug('Destination registry: %s', args.destination)
 
-        for container in self.get_catalog(args.source):
-            for tag in self.get_tags(args.source, container):
-                self.copy(args.source, args.destination, container, tag)
+        for container in self.get_catalog(args.source,
+                                          args.src_username,
+                                          args.src_password):
+            for tag in self.get_tags(args.source,
+                                     args.src_username,
+                                     args.src_password,
+                                     container):
+                self.copy(args.source,
+                          args.src_username, args.src_password,
+                          args.destination,
+                          args.dst_username, args.dst_password,
+                          container, tag)
 
     def _argparser(self):
         self.__parser = argparse.ArgumentParser(
@@ -72,6 +81,30 @@ class RegistrySync():
         )
         self.__parser.add_argument('source', help='Source registry')
         self.__parser.add_argument('destination', help='Destination registry')
+        self.__parser.add_argument(
+            '--src-username',
+            type=str,
+            default=None,
+            help=('Source user name')
+        )
+        self.__parser.add_argument(
+            '--src-password',
+            type=str,
+            default=None,
+            help=('Source password')
+        )
+        self.__parser.add_argument(
+            '--dst-username',
+            type=str,
+            default=None,
+            help=('Destination user name')
+        )
+        self.__parser.add_argument(
+            '--dst-password',
+            type=str,
+            default=None,
+            help=('Destination password')
+        )
         self.__parser.add_argument(
             '-v', '--verbosity',
             type=str,
@@ -95,7 +128,8 @@ class RegistrySync():
             version=(f'{self.__name} {self.__version__} {self.__date__}'),
         )
 
-    def get_catalog(self, registry: str) -> list[str]:
+    def get_catalog(self, registry: str,
+                    username: str, password: str) -> list[str]:
         """ Get registry catalog
 
         Args:
@@ -110,7 +144,12 @@ class RegistrySync():
         suffix: str = '/v2/_catalog'
         uri: str = f'{prefix}{registry}{suffix}'
 
-        response = requests.get(uri, timeout=self.__timeout)
+        if username and password:
+            response = requests.get(uri, timeout=self.__timeout,
+                                    auth=(username, password))
+        else:
+            response = requests.get(uri, timeout=self.__timeout)
+
         result = json.loads(response.text)
 
         if 'repositories' not in result:
@@ -121,7 +160,9 @@ class RegistrySync():
 
         return result['repositories']
 
-    def get_tags(self, registry: str, container: str) -> list[str]:
+    def get_tags(self, registry: str,
+                 username: str, password: str,
+                 container: str) -> list[str]:
         """ Get container image tags
 
         Args:
@@ -137,7 +178,12 @@ class RegistrySync():
         suffix: str = f'/v2/{container}/tags/list'
         uri: str = f'{prefix}{registry}{suffix}'
 
-        response = requests.get(uri, timeout=self.__timeout)
+        if username and password:
+            response = requests.get(uri, timeout=self.__timeout,
+                                    auth=(username, password))
+        else:
+            response = requests.get(uri, timeout=self.__timeout)
+
         result = json.loads(response.text)
 
         if 'tags' not in result:
@@ -148,7 +194,9 @@ class RegistrySync():
 
         return result['tags']
 
-    def copy(self, source: str, destination: str,
+    # pylint: disable=too-many-arguments,too-many-locals
+    def copy(self, source: str, src_username: str, src_password: str,
+             destination: str, dst_username: str, dst_password: str,
              container: str, tag: str) -> subprocess.CompletedProcess:
         """ Copy container image tag between registries
 
@@ -163,12 +211,28 @@ class RegistrySync():
         """
         log.info('Syncing %s:%s', container, tag)
 
+        src_auth = ''
+        if src_username and src_password:
+            src_auth = (
+                f'--src-username={src_username} '
+                f'--src-password={src_password}'
+            )
+
+        dst_auth = ''
+        if dst_username and dst_password:
+            dst_auth = (
+                f'--dst-username={dst_username} '
+                f'--dst-password={dst_password}'
+            )
+
         preffix = 'docker://'
         copy_cmd = 'skopeo copy'
         args = '--src-tls-verify=false --dest-tls-verify=false'
         cmd = (
             f'{copy_cmd} {args} '
             f'{preffix}{source}/{container}:{tag} '
+            f'{src_auth} '
+            f'{dst_auth} '
             f'{preffix}{destination}/{container}:{tag}'
         )
         log.debug('Running: %s', cmd)
