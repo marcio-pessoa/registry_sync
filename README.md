@@ -24,6 +24,12 @@ deactivate
 To run, please execute the following from the root directory:
 
 ```sh
+# Install SO dependency
+apt install -y skopeo
+```
+
+```sh
+# Install Python dependencies
 venv/bin/pip install -r requirements.txt
 ```
 
