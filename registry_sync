@@ -23,8 +23,8 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.2.1-36'
-    __date__ = '2024-04-17'
+    __version__ = '0.2.2-38'
+    __date__ = '2024-04-19'
     __name = 'registry_sync'
 
     def __init__(self):
@@ -228,10 +228,10 @@ class RegistrySync():
             )
 
         if dst_username and dst_password:
-            cmd = (
+            cmd += (
                 ' '
-                f'--dst-username={dst_username} '
-                f'--dst-password={dst_password}'
+                f'--dest-username={dst_username} '
+                f'--dest-password={dst_password}'
             )
 
         log.debug('Running: %s', cmd)
