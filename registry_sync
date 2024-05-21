@@ -23,8 +23,8 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.2.2-38'
-    __date__ = '2024-04-19'
+    __version__ = '0.2.3-41'
+    __date__ = '2024-05-21'
     __name = 'registry_sync'
 
     def __init__(self):
