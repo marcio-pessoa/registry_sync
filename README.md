@@ -25,7 +25,7 @@ To run, please execute the following from the root directory:
 
 ```sh
 # Install SO dependency
-apt install -y skopeo
+sudo apt install -y skopeo
 ```
 
 ```sh
