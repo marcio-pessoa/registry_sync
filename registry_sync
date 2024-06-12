@@ -64,7 +64,7 @@ class RegistrySync():
                         args.dst_username, args.dst_password,
                         container, tag)
             else:
-                log.error('No layers found.')
+                log.error('  No layers found.')
 
     def _argparser(self):
         self.__parser = argparse.ArgumentParser(
