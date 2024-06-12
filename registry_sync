@@ -23,8 +23,8 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.2.3-41'
-    __date__ = '2024-05-21'
+    __version__ = '0.2.4-44'
+    __date__ = '2024-06-12'
     __name = 'registry_sync'
 
     def __init__(self):
@@ -51,15 +51,18 @@ class RegistrySync():
         for container in self.get_catalog(args.source,
                                           args.src_username,
                                           args.src_password):
-            for tag in self.get_tags(args.source,
-                                     args.src_username,
-                                     args.src_password,
-                                     container):
-                self.copy(args.source,
-                          args.src_username, args.src_password,
-                          args.destination,
-                          args.dst_username, args.dst_password,
-                          container, tag)
+            tags = self.get_tags(args.source,
+                                 args.src_username,
+                                 args.src_password,
+                                 container)
+            if tags:
+                for tag in tags:
+                    self.copy(
+                        args.source,
+                        args.src_username, args.src_password,
+                        args.destination,
+                        args.dst_username, args.dst_password,
+                        container, tag)
 
     def _argparser(self):
         self.__parser = argparse.ArgumentParser(
