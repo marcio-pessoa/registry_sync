@@ -20,12 +20,6 @@ RUN chown -R app:app /usr/src/app
 # User activities
 USER app
 
-# Python virtual environment
-RUN pip install virtualenv
-ENV PATH="/home/app/.local/bin:${PATH}"
-RUN virtualenv venv
-RUN ["/bin/bash", "-c", "source venv/bin/activate"]
-
 # Instal Python packages
 RUN pip3 install --no-cache-dir -r requirements.txt
 

@@ -23,7 +23,7 @@ import requests
 class RegistrySync():
     """ RegistrySync class """
 
-    __version__ = '0.2.5-46'
+    __version__ = '0.2.5-52'
     __date__ = '2024-06-12'
     __name = 'registry_sync'
 
